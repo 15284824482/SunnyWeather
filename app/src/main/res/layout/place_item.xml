@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   这里使用了MaterialCardView来作为子项的最外层布局,从而使得Recyclerview中的每个元素都是在卡片中的.
+   至于卡片中的元素内容,只用到了两个TextView,一个用于显示搜索到的地区名,一个用于显示该地区的详细地址.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="4dp"
+    >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="18sp"
+        android:layout_gravity="center_vertical"
+        >
+
+        <TextView
+            android:id="@+id/placeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:id="@+id/placeAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp"
+            />
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
