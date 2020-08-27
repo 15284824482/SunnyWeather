@@ -18,7 +18,20 @@ import kotlin.coroutines.suspendCoroutine
   也会被阻塞住.知道服务器响应我们的请求之后,await()函数会将解析出来的数据模型对象取出并返回,同时回复当前协
   程的执行,searchPlaces()函数在得到await()函数的返回值后会将该数据再返回到上一层.
 */
+/*
+  对新增的WeatherService接口进行封装.
+  这里对WeatherService接口的封装和之前的PlaceService接口的封装写法几乎是一模一样的.
+*/
 object SunnyWeatherNetwork {
+
+    private val weatherService = ServiceCreator.create<WeatherService>()
+
+    suspend fun getDailyWeather(lng: String, lat: String) =
+        weatherService.getDailyWeather(lng, lat).await()
+
+    suspend fun getRealtimeWeather(lng: String, lat: String) =
+        weatherService.getRealtimeWeather(lng, lat).await()
+
 
     private val placeService = ServiceCreator.create<PlaceService>()
 

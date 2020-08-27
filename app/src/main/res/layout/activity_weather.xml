@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    将天气界面上每个部分的布局引入activity_weather.xml中
+    这里,最外层布局使用了一个ScrollView,这是因为天气界面中的内容比较多,使用ScrollView就可以通过滚动
+    的方式查看屏幕以外的内容.由于ScrollView的内部只允许存在一个直接子布局,因此这里又嵌套了一个垂直方
+    向的LinearLayout,然后在LinearLayout中将气界面上每个部分的布局逐个引入.
+    注意:一开始的时候我们是将ScrollView隐藏起来的,不然空数据的界面看上去会很奇怪.等到天气数据请求成功
+    之后,会通过代码的方式将ScrollView显示出来
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/weatherLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none"
+    android:overScrollMode="never"
+    android:visibility="invisible"
+    >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/now" />
+
+        <include layout="@layout/forecast" />
+
+        <include layout="@layout/life_index" />
+
+    </LinearLayout>
+
+</ScrollView>

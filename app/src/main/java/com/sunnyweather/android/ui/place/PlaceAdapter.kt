@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.place
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,24 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.sunnyweather.android.R
 import com.sunnyweather.android.logic.model.Place
+import com.sunnyweather.android.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.place_item.view.*
 /*
   准备Recyclerview的适配器
 */
-class PlaceAdapter(private val fragment: Fragment, private val placeList: List<Place>) :
+/*
+  从搜索城市界面跳转到天气界面
+   这里在onCreateViewHolder()方法里,给place_item.xml最外层布局注册了一个点击事件监听器,然后在点击事件
+   中获取当前点击项的经纬度坐标和地区名称,并把它们传入Intent中,最后调用Fragment的startActivity()方法
+   启动WeatherActivity
+*/
+/*
+ 对存储与读取Place对象的功能进行具体的实现,这里需要进行两处修改:
+    先把 PlaceAdapter的主构造函数中传入的Fragment对象改成PlaceFragment对象,这样就可以调用PlaceFragment
+    所对应的PlaceViewModel了;接着在onCreateViewHolder()方法中,当点击了任何子项布局时,在跳转到WeatherAc
+    tivity之前,先调用PlaceViewModel的savePlace()方法存储选中的城市.
+*/
+class PlaceAdapter(private val fragment: PlaceFragment, private val placeList: List<Place>) :
     RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
 
     inner class ViewHolder(view:View) : RecyclerView.ViewHolder(view){
@@ -23,7 +37,21 @@ class PlaceAdapter(private val fragment: Fragment, private val placeList: List<P
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.place_item,
             parent, false)
-        return ViewHolder(view)
+
+        val holder = ViewHolder(view)
+        holder.itemView.setOnClickListener {
+            val position = holder.adapterPosition
+            val place = placeList[position]
+            val intent = Intent(parent.context,WeatherActivity::class.java).apply {
+                putExtra("location_lng", place.location.lng)
+                putExtra("location_lat", place.location.lat)
+                putExtra("place_name", place.name)
+            }
+            fragment.viewModel.savePlace(place)
+            fragment.startActivity(intent)
+            fragment.activity?.finish()
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
