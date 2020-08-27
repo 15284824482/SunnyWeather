@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sunnyweather.android.MainActivity
 import com.sunnyweather.android.R
 import com.sunnyweather.android.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
@@ -48,7 +49,11 @@ class PlaceFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (viewModel.isPlaceSaved()) {
+        /*
+           这里多做了一层逻辑,只要当PlaceFragment被嵌入MainActivity中,并且之前已经存在选中的城市,
+           此时才会直接跳转到 WeatherActivity,这样就可以解决无限跳转的问题
+        */
+        if (activity is MainActivity&& viewModel.isPlaceSaved()) {
             val place = viewModel.getSavePlace()
             val intent = Intent(context, WeatherActivity::class.java).apply {
                 putExtra("location_lng", place.location.lng)

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sunnyweather.android.R
 import com.sunnyweather.android.logic.model.Place
 import com.sunnyweather.android.ui.weather.WeatherActivity
+import kotlinx.android.synthetic.main.activity_weather.*
 import kotlinx.android.synthetic.main.place_item.view.*
 /*
   准备Recyclerview的适配器
@@ -42,14 +43,37 @@ class PlaceAdapter(private val fragment: PlaceFragment, private val placeList: L
         holder.itemView.setOnClickListener {
             val position = holder.adapterPosition
             val place = placeList[position]
-            val intent = Intent(parent.context,WeatherActivity::class.java).apply {
+            /*
+              处理切换城市后的逻辑,因为之前选中了某个城市后是跳转到WeatherActivity的,而现在由于本来就
+              是在WeatherActivity中的,因此并不需要跳转,只要去请求新选择城市的天气信息即可.
+              这里对PlaceFragment所处的Activity进行了判断,如果是在WeatherActivity中,那么就关闭滑动菜
+              单,给WeatherActivity赋值新的经纬度坐标和地区名称,然后刷新城市的天气信息;而如果是在Main
+              Activity中,那么就保持之前的处理逻辑不变即可.
+            */
+            val activity = fragment.activity
+            if (activity is WeatherActivity) {
+                activity.drawerLayout.closeDrawers()
+                activity.viewModel.locationLng = place.location.lng
+                activity.viewModel.locationLat = place.location.lat
+                activity.viewModel.placeName = place.name
+                activity.refreshWeather()
+            } else {
+                val intent = Intent(parent.context,WeatherActivity::class.java).apply {
+                    putExtra("location_lng", place.location.lng)
+                    putExtra("location_lat", place.location.lat)
+                    putExtra("place_name", place.name)
+                }
+                fragment.startActivity(intent)
+                fragment.activity?.finish()
+            }
+/*            val intent = Intent(parent.context,WeatherActivity::class.java).apply {
                 putExtra("location_lng", place.location.lng)
                 putExtra("location_lat", place.location.lat)
                 putExtra("place_name", place.name)
             }
-            fragment.viewModel.savePlace(place)
             fragment.startActivity(intent)
-            fragment.activity?.finish()
+            fragment.activity?.finish()*/
+            fragment.viewModel.savePlace(place)
         }
         return holder
     }
